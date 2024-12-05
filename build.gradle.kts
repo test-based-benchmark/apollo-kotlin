@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeHostTest
 
 plugins {
   id("build.logic") apply false
+  id("org.jetbrains.kotlinx.kover") version "0.8.3" apply false
 }
 
 apply(plugin = "com.github.ben-manes.versions")
@@ -166,3 +167,9 @@ tasks.register("rmbuild") {
 }
 
 apolloRoot(ciBuild)
+
+subprojects {
+  if (name != "intellij-plugin") {
+    apply(plugin = "org.jetbrains.kotlinx.kover")
+  }
+}
