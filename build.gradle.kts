@@ -173,3 +173,12 @@ subprojects {
     apply(plugin = "org.jetbrains.kotlinx.kover")
   }
 }
+
+subprojects {
+  if (name != "intellij-plugin") {
+    tasks.named("koverXmlReport") {
+      dependsOn(tasks.matching { it.name == "jvmTest" })
+    }
+  }
+}
+
