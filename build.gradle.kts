@@ -169,16 +169,21 @@ tasks.register("rmbuild") {
 apolloRoot(ciBuild)
 
 subprojects {
-  if (name != "intellij-plugin") {
+  if (name !in setOf("apollo-gradle-plugin", "intellij-plugin")) {
     apply(plugin = "org.jetbrains.kotlinx.kover")
   }
 }
 
 subprojects {
-  if (name != "intellij-plugin") {
-    tasks.named("koverXmlReport") {
-      dependsOn(tasks.matching { it.name == "jvmTest" })
+  afterEvaluate {
+    if (name !in setOf("apollo-gradle-plugin", "intellij-plugin")) { 
+      tasks.findByName("jvmTest")?.let { task ->
+        (task as Test).apply {
+          binaryResultsDirectory.set(layout.buildDirectory.dir("test-results/test").get().asFile)
+          reports.html.outputLocation.set(layout.buildDirectory.dir("reports/tests/test").get().asFile)
+          reports.junitXml.outputLocation.set(layout.buildDirectory.dir("test-results/test").get().asFile)
+        }
+      }
     }
   }
 }
-
